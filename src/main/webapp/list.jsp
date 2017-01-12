@@ -13,6 +13,9 @@
 <body>
     <div style="text-align: center">
         <h3>List JSP</h3>
+        <br>
+        <%--TODO WHY /shiro/logout --%>
+        <a href="/shiro/logout">Logout</a>
     </div>
 </body>
 </html>

@@ -12,6 +12,14 @@
         <param-name>targetFilterLifecycle</param-name>
         <param-value>true</param-value>
     </init-param>
+    <!--
+        1、DelegatingFilterProxy 实际上是 Filter 的一个代理对象，默认情况下， Spring 会到 IOC 容器中查找和 <filter-name> 对应的 filter bean。
+        2、通过 DelegatingFilterProxy 源代码：同时可以初始化 targetBeanName 参数设置 <filter-name> ，效果相同
+    -->
+    <!--<init-param>
+        <param-name>targetBeanName</param-name>
+        <param-value>shiroFilter2</param-value>
+    </init-param>-->
 </filter>
 <filter-mapping>
     <filter-name>shiroFilter</filter-name>

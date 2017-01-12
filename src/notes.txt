@@ -1,0 +1,8 @@
+
+1、获取当前 Subject
+2、校验当前 Subject 是否已经认证 isAuthenticated()
+3、若没有被认证，则封装目标 username、password 为 token   ---   通过构建表单提交实现
+4、执行登陆 subject.login()
+5、自定义 realm ， 从数据库中获取对应的记录，返回给 shiro
+1）自定义 realm 继承自 org.apache.shiro.realm.AuthorizingRealm 即可
+6、

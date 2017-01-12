@@ -1,8 +1,6 @@
 package cn.cxy.realms;
 
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -20,13 +18,49 @@ import org.springframework.stereotype.Component;
 @Component
 public class ShiroRealm extends AuthorizingRealm {
 
+    /**
+     * 授权
+     * @param principalCollection
+     * @return
+     */
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         System.err.println("授权------doGetAuthorizationInfo------");
         return null;
     }
 
+    /**
+     * 认证
+     * @param authenticationToken
+     * @return
+     * @throws AuthenticationException
+     */
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        //1、AuthenticationToken 强转为 UsernamePasswordToken
         System.err.println("认证----------doGetAuthenticationInfo---------");
-        return null;
+        UsernamePasswordToken token = (UsernamePasswordToken)authenticationToken;
+
+        //2、从 UsernamePasswordToken 中获取用户录入的 username   TODO 密码
+        String username = token.getUsername();
+        //3、从数据库中查询对应记录
+        System.out.println("data from db:"+username+" : "+"123456");
+
+        //TODO
+        if ("unknown".equals(username)){
+            throw new UnknownAccountException("-------unknown account-------");
+        }
+        if ("monster".equals(username)){
+            throw new UnknownAccountException("------account has been locked-------");
+        }
+        String inputPassword = new String(token.getPassword());
+        if (!"123456".equals(inputPassword)){
+            throw new IncorrectCredentialsException("---------wrong password--------");
+        }
+        //3、根据记录存在与否返回 null[异常交由对应 Controller 抛出] 或 SimpleAuthenticationInfo
+        Object principal = username;
+        Object credentials = "123456";
+        String realmName = getName();
+        //TODO 返回的 info 中需要来源于数据库的正确信息【用户名/用户实体 与 密码】 具体密码比对由 shiro 完成
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(principal,credentials,realmName);
+        return info;
     }
 }

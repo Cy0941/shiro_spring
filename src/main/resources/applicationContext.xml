@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="GBK"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -6,108 +6,14 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 
-    <!--非 @Controller 包扫描范围-->
+    <!--闈� @Controller 鍖呮壂鎻忚寖鍥�-->
     <context:component-scan base-package="cn.cxy">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-    <!-- =========================================================
-         Shiro Core Components - Not Spring Specific
-         ========================================================= -->
-    <!-- SecurityManager 配置-->
-    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-        <!--缓存管理-->
-        <property name="cacheManager" ref="cacheManager"/>
-        <!--realm 配置-->
-        <property name="realm" ref="jdbcRealm"/>
-    </bean>
-
-    <!-- 缓存配置 -->
-    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
-        <!-- Set a net.sf.ehcache.CacheManager instance here if you already have one.  If not, a new one
-             will be creaed with a default config:
-             <property name="cacheManager" ref="ehCacheManager"/> -->
-        <!-- If you don't have a pre-built net.sf.ehcache.CacheManager instance to inject, but you want
-             a specific Ehcache configuration to be used, specify that here.  If you don't, a default
-             will be used.:  -->
-        <!--使用 eccache.xml -->
-        <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>
-    </bean>
-
-    <!-- Used by the SecurityManager to access security data (users, roles, etc).
-         Many other realm implementations can be used too (PropertiesRealm,
-         LdapRealm, etc. -->
-    <!--自定义 Realm -->
-    <bean id="jdbcRealm" class="cn.cxy.realms.ShiroRealm">
-        <!--<property name="name" value="jdbcRealm"/>
-        <property name="dataSource" ref="dataSource"/>-->
-        <!--加密方式配置-->
-        <property name="credentialsMatcher">
-            <!-- The 'bootstrapDataPopulator' Sha256 hashes the password
-                 (using the username as the salt) then base64 encodes it: -->
-            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
-                <!--加密算法配置-->
-                <property name="hashAlgorithmName" value="SHA-256"/>
-                <!-- true means hex encoded, false means base64 encoded -->
-                <!--编码方式配置-->
-                <property name="storedCredentialsHexEncoded" value="false"/>
-            </bean>
-        </property>
-    </bean>
-
-    <!-- =========================================================
-         Shiro Spring-specific integration
-         ========================================================= -->
-    <!-- Post processor that automatically invokes init() and destroy() methods
-         for Spring-configured Shiro objects so you don't have to
-         1) specify an init-method and destroy-method attributes for every bean
-            definition and
-         2) even know which Shiro objects require these methods to be
-            called. -->
-    <!--shiro 生命周期管理-->
-    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
-
-    <!-- Enable Shiro Annotations for Spring-configured beans.  Only run after
-         the lifecycleBeanProcessor has run: -->
-    <!--Shiro 注解配置，仅在 lifecycleBeanProcessor 配置后生效-->
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
-          depends-on="lifecycleBeanPostProcessor"/>
-    <!--TODO-->
-    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
-        <property name="securityManager" ref="securityManager"/>
-    </bean>
-
-    <!-- Define the Shiro Filter here (as a FactoryBean) instead of directly in web.xml -
-         web.xml uses the DelegatingFilterProxy to access this bean.  This allows us
-         to wire things with more control as well utilize nice Spring things such as
-         PropertiesPlaceholderConfigurer and abstract beans or anything else we might need: -->
-    <!--核心过滤器链：id 属性必须与 web.xml 中 DelegatingFilterProxy 的 <filter-name> 名称相同 -->
-    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
-        <property name="securityManager" ref="securityManager"/>
-        <!--登录-->
-        <property name="loginUrl" value="/login.jsp"/>
-        <!--可以不配置-->
-        <property name="successUrl" value="/list.jsp"/>
-        <!--未授权-->
-        <property name="unauthorizedUrl" value="/unauthorized.jsp"/>
-        <!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean
-             defined will be automatically acquired and available via its beanName in chain
-             definitions, but you can perform overrides or parent/child consolidated configuration
-             here if you like: -->
-        <!-- <property name="filters">
-            <util:map>
-                <entry key="aName" value-ref="someFilterPojo"/>
-            </util:map>
-        </property> -->
-        <property name="filterChainDefinitions">
-            <value>
-                /login.jsp = anon
-                /list.jsp = authc
-                /add.jsp = authc
-                # everything else requires authentication:
-                /** = authc
-            </value>
-        </property>
-    </bean>
+    <!--寮曞叆 shiro 閰嶇疆鏂囦欢-->
+    <import resource="applicationContext-shiro.xml"/>
+    <!--寮曞叆澶栭儴 Java 鏂囦欢-->
+    <!--<bean class=""/>-->
 
 </beans>

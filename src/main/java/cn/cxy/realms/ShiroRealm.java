@@ -21,10 +21,12 @@ import org.springframework.stereotype.Component;
 public class ShiroRealm extends AuthorizingRealm {
 
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        System.err.println("授权------doGetAuthorizationInfo------");
         return null;
     }
 
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        System.err.println("认证----------doGetAuthenticationInfo---------");
         return null;
     }
 }

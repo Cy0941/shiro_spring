@@ -84,9 +84,12 @@
     <!--核心过滤器链：id 属性必须与 web.xml 中 DelegatingFilterProxy 的 <filter-name> 名称相同 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"/>
-        <property name="loginUrl" value="/login.jsp"/><!--登录-->
-        <property name="successUrl" value="/list.jsp"/><!--可以不配置-->
-        <property name="unauthorizedUrl" value="/unauthorized.jsp"/><!--未授权-->
+        <!--登录-->
+        <property name="loginUrl" value="/login.jsp"/>
+        <!--可以不配置-->
+        <property name="successUrl" value="/list.jsp"/>
+        <!--未授权-->
+        <property name="unauthorizedUrl" value="/unauthorized.jsp"/>
         <!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean
              defined will be automatically acquired and available via its beanName in chain
              definitions, but you can perform overrides or parent/child consolidated configuration
@@ -98,12 +101,9 @@
         </property> -->
         <property name="filterChainDefinitions">
             <value>
-                /favicon.ico = anon
-                /logo.png = anon
-                /shiro.css = anon
-                /s/login = anon
-                # allow WebStart to pull the jars for the swing app:
-                /*.jar = anon
+                /login.jsp = anon
+                /list.jsp = authc
+                /add.jsp = authc
                 # everything else requires authentication:
                 /** = authc
             </value>

@@ -1,3 +1,6 @@
+1、密码加密 MD5
+2、替换当前 Realm 的 credentialMatcher 属性为 CredentialsMatcher 对象，并设置加密算法
+
 
 1、获取当前 Subject
 2、校验当前 Subject 是否已经认证 isAuthenticated()

@@ -11,7 +11,7 @@
         <!--缓存管理-->
         <property name="cacheManager" ref="cacheManager"/>
         <!--realm 配置-->
-        <property name="realm" ref="shiroRealm"/>
+        <property name="realm" ref="realm"/>
     </bean>
 
     <!-- 缓存配置 -->
@@ -30,6 +30,17 @@
          Many other realm implementations can be used too (PropertiesRealm,
          LdapRealm, etc. -->
     <!--自定义 Realm -->
+    <bean class="cn.cxy.realms.ShiroRealm" id="realm">
+        <!--自定义加密-->
+        <property name="credentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <!--加密算法配置-->
+                <property name="hashAlgorithmName" value="MD5"/>
+                <!--加密次数-->
+                <property name="hashIterations" value="1024"/>
+            </bean>
+        </property>
+    </bean>
 
 
     <!-- =========================================================

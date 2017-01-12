@@ -2,8 +2,10 @@ package cn.cxy.realms;
 
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -58,9 +60,24 @@ public class ShiroRealm extends AuthorizingRealm {
         //3、根据记录存在与否返回 null[异常交由对应 Controller 抛出] 或 SimpleAuthenticationInfo
         Object principal = username;
         Object credentials = "123456";
+        if ("admin".equals(username)) {
+            credentials = "038bdaf98f2037b31f1e75b5b4c9b26e";
+        }
         String realmName = getName();
         //TODO 返回的 info 中需要来源于数据库的正确信息【用户名/用户实体 与 密码】 具体密码比对由 shiro 完成
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(principal,credentials,realmName);
+        //设置加密 salt 值
+        info.setCredentialsSalt(ByteSource.Util.bytes(username));
         return info;
+    }
+
+
+    public static void main(String[] args){
+        String hashAlgorithmName = "md5";
+        String credentials = "123456";
+        ByteSource salt = ByteSource.Util.bytes("admin");
+        int hashIterations = 1024 ;
+        SimpleHash hash = new SimpleHash(hashAlgorithmName, credentials, salt, hashIterations);
+        System.out.println(hash);
     }
 }

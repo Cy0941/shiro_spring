@@ -10,8 +10,25 @@
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
         <!--缓存管理-->
         <property name="cacheManager" ref="cacheManager"/>
-        <!--realm 配置-->
-        <property name="realm" ref="realm"/>
+        <!--单 realm 配置-->
+        <!--<property name="realm" ref="firstRealm"/>-->
+
+        <!--多 realm 下认证策略配置-->
+        <property name="authenticator" ref="authenticator"/>
+    </bean>
+
+    <bean class="org.apache.shiro.authc.pam.ModularRealmAuthenticator" id="authenticator">
+        <!--多 realms 配置 TODO 多 realm 会涉及到认证策略，此时 realm 需要配置在 authenticator 中-->
+        <property name="realms">
+            <list>
+                <ref bean="firstRealm"/>
+                <ref bean="secondRealm"/>
+            </list>
+        </property>
+        <property name="authenticationStrategy">
+            <!--AtLeastOneSuccessfulStrategy 为默认认证策略-->
+            <bean class="org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy"/>
+        </property>
     </bean>
 
     <!-- 缓存配置 -->
@@ -30,7 +47,15 @@
          Many other realm implementations can be used too (PropertiesRealm,
          LdapRealm, etc. -->
     <!--自定义 Realm -->
-    <bean class="cn.cxy.realms.ShiroRealm" id="realm">
+    <bean class="cn.cxy.realms.SecondRealm" id="secondRealm">
+        <property name="credentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <property name="hashAlgorithmName" value="SHA1"/>
+                <property name="hashIterations" value="1024"/>
+            </bean>
+        </property>
+    </bean>
+    <bean class="cn.cxy.realms.ShiroRealm" id="firstRealm">
         <!--自定义加密-->
         <property name="credentialsMatcher">
             <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
@@ -95,13 +120,16 @@
         -->
         <property name="filterChainDefinitions">
             <value>
-                /shiro/login = anon
                 /login.jsp = anon
-                /list.jsp = authc
-                /user.jsp = authc
-                /add.jsp = authc
+                /shiro/login = anon
                 <!--TODO 登出过滤器-->
                 /shiro/logout = logout
+
+                /add.jsp = authc
+                /list.jsp = authc
+                /user.jsp = roles[user]
+                /admin.jsp = roles[admin]
+
                 # everything else requires authentication:
                 /** = authc
             </value>

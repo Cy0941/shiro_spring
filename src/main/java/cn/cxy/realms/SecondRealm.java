@@ -3,7 +3,6 @@ package cn.cxy.realms;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.realm.AuthenticatingRealm;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
@@ -18,7 +17,7 @@ import org.apache.shiro.util.ByteSource;
  */
 
 //@Component
-public class ShiroRealm extends AuthorizingRealm {
+public class SecondRealm extends AuthorizingRealm {
 
     /**
      * 授权
@@ -38,7 +37,7 @@ public class ShiroRealm extends AuthorizingRealm {
      */
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         //1、AuthenticationToken 强转为 UsernamePasswordToken
-        System.err.println("第一个----------doGetAuthenticationInfo---------");
+        System.err.println("第二个----------doGetAuthenticationInfo---------");
         UsernamePasswordToken token = (UsernamePasswordToken)authenticationToken;
 
         //2、从 UsernamePasswordToken 中获取用户录入的 username   TODO 密码
@@ -61,9 +60,9 @@ public class ShiroRealm extends AuthorizingRealm {
         Object principal = username;
         Object credentials = "123456";
         if ("admin".equals(username)) {
-            credentials = "038bdaf98f2037b31f1e75b5b4c9b26e";
+            credentials = "ce2f6417c7e1d32c1d81a797ee0b499f87c5de06";
         }else if ("user".equals(username)){
-            credentials = "098d2c478e9c11555ce2823231e02ec1";
+            credentials = "073d4c3ae812935f23cb3f2a71943f49e082a718";
         }
         String realmName = getName();
         //TODO 返回的 info 中需要来源于数据库的正确信息【用户名/用户实体 与 密码】 具体密码比对由 shiro 完成
@@ -79,7 +78,7 @@ public class ShiroRealm extends AuthorizingRealm {
      * @param args
      */
     public static void main(String[] args){
-        String hashAlgorithmName = "md5";
+        String hashAlgorithmName = "sha1";
         String credentials = "123456";
         ByteSource salt = ByteSource.Util.bytes("user");
         int hashIterations = 1024 ;

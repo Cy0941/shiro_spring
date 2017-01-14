@@ -14,6 +14,10 @@
     <div style="text-align: center">
         <h3>List JSP</h3>
         <br>
+        <a href="/user.jsp">User JSP</a>
+        <br>
+        <a href="/admin.jsp">Admin JSP</a>
+        <br>
         <%--TODO WHY /shiro/logout --%>
         <a href="/shiro/logout">Logout</a>
     </div>

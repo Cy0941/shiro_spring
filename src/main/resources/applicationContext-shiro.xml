@@ -9,7 +9,7 @@
     <!-- SecurityManager 配置-->
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
         <!--缓存管理-->
-        <property name="cacheManager" ref="cacheManager"/>
+        <property name="cacheManager" ref="cacheManager"/> 
         <!--单 realm 配置-->
         <!--<property name="realm" ref="firstRealm"/>-->
 

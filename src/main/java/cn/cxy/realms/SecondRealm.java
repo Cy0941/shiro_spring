@@ -16,7 +16,6 @@ import org.apache.shiro.util.ByteSource;
  * @since: Thinkingbar Web Proejct 1.0
  */
 
-//@Component
 public class SecondRealm extends AuthorizingRealm {
 
     /**

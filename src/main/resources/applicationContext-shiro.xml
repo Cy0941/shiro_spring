@@ -121,14 +121,16 @@
         <property name="filterChainDefinitions">
             <value>
                 /login.jsp = anon
-                /shiro/login = anon
-                <!--TODO 登出过滤器-->
-                /shiro/logout = logout
-
                 /add.jsp = authc
                 /list.jsp = authc
                 /user.jsp = roles[user]
                 /admin.jsp = roles[admin]
+
+                /shiro/login = anon
+
+                <!--TODO 登出过滤器-->
+                /shiro/logout = logout
+
 
                 <!--everything else requires authentication-->
                 /** = authc

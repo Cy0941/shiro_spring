@@ -31,10 +31,4 @@ public class LoginController {
         }*/
         return "list";
     }
-
-    /*@RequestMapping(value = "logout")
-    public void logout(){
-        SecurityUtils.getSubject().logout();
-    }*/
-
 }

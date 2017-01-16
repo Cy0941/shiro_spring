@@ -20,11 +20,11 @@ public class SecondRealm extends AuthorizingRealm {
 
     /**
      * 授权
-     * @param principalCollection
+     * @param principals
      * @return
      */
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        System.err.println("授权------doGetAuthorizationInfo------");
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        System.out.println("---------SecondRealm---------");
         return null;
     }
 

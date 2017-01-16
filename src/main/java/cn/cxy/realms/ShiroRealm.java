@@ -24,14 +24,14 @@ public class ShiroRealm extends AuthorizingRealm {
 
     /**
      * 授权
-     * @param principalCollection
+     * @param principals
      * @return
      */
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         System.err.println("授权------doGetAuthorizationInfo------");
         //1、从 PrincipalCollection 中获取登录用户信息
         //TODO 此处 principalCollection.getPrimaryPrincipal() 返回值由 doGetAuthenticationInfo 方法构建的参数决定
-        Object primaryPrincipal = principalCollection.getPrimaryPrincipal();
+        Object primaryPrincipal = principals.getPrimaryPrincipal();
 
         //2、利用登录用户的信息获取对应的角色或权限
         Set<String> role = new HashSet<String>();
@@ -44,7 +44,6 @@ public class ShiroRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo(role);
 
         //4、返回对应info
-
         return info;
     }
 

@@ -18,6 +18,8 @@
         <br>
         <a href="/admin.jsp">Admin JSP</a>
         <br>
+        <a href="/add.jsp">Add JSP</a>
+        <br>
         <%--TODO WHY /shiro/logout --%>
         <a href="/shiro/logout">Logout</a>
     </div>

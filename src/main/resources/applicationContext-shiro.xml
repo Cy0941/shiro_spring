@@ -17,6 +17,7 @@
         <property name="authenticator" ref="authenticator"/>
     </bean>
 
+    <!--认证策略配置-->
     <bean class="org.apache.shiro.authc.pam.ModularRealmAuthenticator" id="authenticator">
         <!--多 realms 配置 TODO 多 realm 会涉及到认证策略，此时 realm 需要配置在 authenticator 中-->
         <property name="realms">
@@ -39,7 +40,7 @@
         <!-- If you don't have a pre-built net.sf.ehcache.CacheManager instance to inject, but you want
              a specific Ehcache configuration to be used, specify that here.  If you don't, a default
              will be used.:  -->
-        <!--使用 eccache.xml -->
+        <!--使用 ehcache.xml -->
         <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>
     </bean>
 
@@ -120,20 +121,11 @@
         -->
         <property name="filterChainDefinitions">
             <value>
-                /login.jsp = anon
-                /add.jsp = authc
-                /list.jsp = authc
-                /user.jsp = roles[user]
-                /admin.jsp = roles[admin]
-
-                /shiro/login = anon
-
-                <!--TODO 登出过滤器-->
-                /shiro/logout = logout
-
-
-                <!--everything else requires authentication-->
-                /** = authc
+                /admin.jsp=authc,roles[admin]
+                /user.jsp=authc,roles[user]
+                /shiro/login=anon
+                /shiro/logout=logout
+                /**=authc
             </value>
         </property>
     </bean>

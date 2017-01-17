@@ -7,7 +7,7 @@
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
         <!--缓存管理-->
         <property name="cacheManager" ref="cacheManager"/>
-        <!--认证策略配置-->
+        <!--TODO 认证策略配置，必须在 realms 属性之前-->
         <property name="authenticator" ref="authenticator"/>
         <!--单 realm 配置-->
         <!--<property name="realm" ref="firstRealm"/>-->

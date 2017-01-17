@@ -31,4 +31,10 @@ public class LoginController {
         }*/
         return "list";
     }
+
+    @RequestMapping(value = "init",method = RequestMethod.POST)
+    public void init(){
+        Subject subject = SecurityUtils.getSubject();
+        System.out.println(subject.hasRole("user"));
+    }
 }

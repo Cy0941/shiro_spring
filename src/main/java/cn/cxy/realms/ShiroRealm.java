@@ -19,7 +19,6 @@ import java.util.Set;
  * @author: cx.yang
  * @since: Thinkingbar Web Proejct 1.0
  */
-
 public class ShiroRealm extends AuthorizingRealm {
 
     /**

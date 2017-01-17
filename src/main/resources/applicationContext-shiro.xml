@@ -3,9 +3,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- =========================================================
-         Shiro Core Components - Not Spring Specific
-         ========================================================= -->
     <!-- SecurityManager 配置-->
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
         <!--缓存管理-->
@@ -13,40 +10,45 @@
         <!--单 realm 配置-->
         <!--<property name="realm" ref="firstRealm"/>-->
 
-        <!--多 realm 下认证策略配置-->
-        <property name="authenticator" ref="authenticator"/>
-    </bean>
-
-    <!--认证策略配置-->
-    <bean class="org.apache.shiro.authc.pam.ModularRealmAuthenticator" id="authenticator">
-        <!--多 realms 配置 TODO 多 realm 会涉及到认证策略，此时 realm 需要配置在 authenticator 中-->
         <property name="realms">
             <list>
                 <ref bean="firstRealm"/>
                 <ref bean="secondRealm"/>
             </list>
         </property>
+
+        <!--
+            TODO 如果显示配置authenticator：securityManager 的 realms 必须配置在 对应的 authenticator 中；且必须同时配置 authorizer
+        -->
+        <!--多 realms 下认证策略配置
+        <property name="authenticator" ref="authenticator"/>
+        &lt;!&ndash; 授权配置 &ndash;&gt;
+        <property name="authorizer" ref="firstRealm"/>-->
+    </bean>
+
+
+
+    <!--认证策略配置-->
+    <bean class="org.apache.shiro.authc.pam.ModularRealmAuthenticator" id="authenticator">
         <property name="authenticationStrategy">
             <!--AtLeastOneSuccessfulStrategy 为默认认证策略-->
             <bean class="org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy"/>
+        </property>
+        <!--多 realms 配置 -->
+        <property name="realms">
+            <list>
+                <ref bean="firstRealm"/>
+                <ref bean="secondRealm"/>
+            </list>
         </property>
     </bean>
 
     <!-- 缓存配置 -->
     <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
-        <!-- Set a net.sf.ehcache.CacheManager instance here if you already have one.  If not, a new one
-             will be creaed with a default config:
-             <property name="cacheManager" ref="ehCacheManager"/> -->
-        <!-- If you don't have a pre-built net.sf.ehcache.CacheManager instance to inject, but you want
-             a specific Ehcache configuration to be used, specify that here.  If you don't, a default
-             will be used.:  -->
         <!--使用 ehcache.xml -->
         <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>
     </bean>
 
-    <!-- Used by the SecurityManager to access security data (users, roles, etc).
-         Many other realm implementations can be used too (PropertiesRealm,
-         LdapRealm, etc. -->
     <!--自定义 Realm -->
     <bean class="cn.cxy.realms.SecondRealm" id="secondRealm">
         <property name="credentialsMatcher">
@@ -69,20 +71,9 @@
     </bean>
 
 
-    <!-- =========================================================
-         Shiro Spring-specific integration
-         ========================================================= -->
-    <!-- Post processor that automatically invokes init() and destroy() methods
-         for Spring-configured Shiro objects so you don't have to
-         1) specify an init-method and destroy-method attributes for every bean
-            definition and
-         2) even know which Shiro objects require these methods to be
-            called. -->
     <!--shiro 生命周期管理-->
     <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
 
-    <!-- Enable Shiro Annotations for Spring-configured beans.  Only run after
-         the lifecycleBeanProcessor has run: -->
     <!--Shiro 注解配置，仅在 lifecycleBeanProcessor 配置后生效-->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
           depends-on="lifecycleBeanPostProcessor"/>
@@ -93,10 +84,6 @@
         <property name="securityManager" ref="securityManager"/>
     </bean>
 
-    <!-- Define the Shiro Filter here (as a FactoryBean) instead of directly in web.xml -
-         web.xml uses the DelegatingFilterProxy to access this bean.  This allows us
-         to wire things with more control as well utilize nice Spring things such as
-         PropertiesPlaceholderConfigurer and abstract beans or anything else we might need: -->
     <!--核心过滤器链：id 属性必须与 web.xml 中 DelegatingFilterProxy 的 <filter-name> 名称相同 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"/>

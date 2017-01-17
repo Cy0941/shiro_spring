@@ -15,7 +15,6 @@ import org.apache.shiro.util.ByteSource;
  * @author: cx.yang
  * @since: Thinkingbar Web Proejct 1.0
  */
-
 public class SecondRealm extends AuthorizingRealm {
 
     /**

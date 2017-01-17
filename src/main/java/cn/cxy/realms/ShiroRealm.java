@@ -27,14 +27,16 @@ public class ShiroRealm extends AuthorizingRealm {
      * @return
      */
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        System.err.println("授权------doGetAuthorizationInfo------");
+        System.err.println("第一个-----授权-----ShiroRealm------");
         //1、从 PrincipalCollection 中获取登录用户信息
         //TODO 此处 principalCollection.getPrimaryPrincipal() 返回值由 doGetAuthenticationInfo 方法构建的参数决定
         Object primaryPrincipal = principals.getPrimaryPrincipal();
 
         //2、利用登录用户的信息获取对应的角色或权限
         Set<String> role = new HashSet<String>();
-        role.add("user");
+        if ("admin".equals(primaryPrincipal)||"user".equals(primaryPrincipal)){
+            role.add("user");
+        }
         if ("admin".equals(primaryPrincipal)){
             role.add("admin");
         }
@@ -54,7 +56,7 @@ public class ShiroRealm extends AuthorizingRealm {
      */
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         //1、AuthenticationToken 强转为 UsernamePasswordToken
-        System.err.println("第一个----------doGetAuthenticationInfo---------");
+        System.err.println("第一个-----认证-----ShiroRealm---------");
         UsernamePasswordToken token = (UsernamePasswordToken)authenticationToken;
 
         //2、从 UsernamePasswordToken 中获取用户录入的 username   TODO 密码
@@ -80,6 +82,8 @@ public class ShiroRealm extends AuthorizingRealm {
             credentials = "038bdaf98f2037b31f1e75b5b4c9b26e";
         }else if ("user".equals(username)){
             credentials = "098d2c478e9c11555ce2823231e02ec1";
+        }else if ("guest".equals(username)){
+            credentials = "6af5141317258b4c866bd2bfe6b16e4e";
         }
         String realmName = getName();
         //TODO 返回的 info 中需要来源于数据库的正确信息【用户名/用户实体 与 密码】 具体密码比对由 shiro 完成
@@ -97,7 +101,7 @@ public class ShiroRealm extends AuthorizingRealm {
     public static void main(String[] args){
         String hashAlgorithmName = "md5";
         String credentials = "123456";
-        ByteSource salt = ByteSource.Util.bytes("user");
+        ByteSource salt = ByteSource.Util.bytes("guest");
         int hashIterations = 1024 ;
         SimpleHash hash = new SimpleHash(hashAlgorithmName, credentials, salt, hashIterations);
         System.out.println(hash);

@@ -2,10 +2,14 @@ package cn.cxy.realms;
 
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Function: 自定义Realm，继承 AuthorizingRealm
@@ -23,8 +27,14 @@ public class SecondRealm extends AuthorizingRealm {
      * @return
      */
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        System.out.println("---------SecondRealm---------");
-        return null;
+        System.err.println("第二个-----授权----SecondRealm---------");
+        Object principal = principals.getPrimaryPrincipal();
+        Set<String> roles = new HashSet<String>();
+        if ("user".equals(principal));{
+            roles.add("guest");
+        }
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo(roles);
+        return info;
     }
 
     /**
@@ -35,7 +45,7 @@ public class SecondRealm extends AuthorizingRealm {
      */
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         //1、AuthenticationToken 强转为 UsernamePasswordToken
-        System.err.println("第二个----------doGetAuthenticationInfo---------");
+        System.err.println("第二个-----认证-----SecondRealm---------");
         UsernamePasswordToken token = (UsernamePasswordToken)authenticationToken;
 
         //2、从 UsernamePasswordToken 中获取用户录入的 username   TODO 密码
@@ -61,6 +71,8 @@ public class SecondRealm extends AuthorizingRealm {
             credentials = "ce2f6417c7e1d32c1d81a797ee0b499f87c5de06";
         }else if ("user".equals(username)){
             credentials = "073d4c3ae812935f23cb3f2a71943f49e082a718";
+        }else if ("guest".equals(username)){
+            credentials = "3e17f932da1d0abac5b09c46004c1766a66211be";
         }
         String realmName = getName();
         //TODO 返回的 info 中需要来源于数据库的正确信息【用户名/用户实体 与 密码】 具体密码比对由 shiro 完成
@@ -78,7 +90,7 @@ public class SecondRealm extends AuthorizingRealm {
     public static void main(String[] args){
         String hashAlgorithmName = "sha1";
         String credentials = "123456";
-        ByteSource salt = ByteSource.Util.bytes("user");
+        ByteSource salt = ByteSource.Util.bytes("guest");
         int hashIterations = 1024 ;
         SimpleHash hash = new SimpleHash(hashAlgorithmName, credentials, salt, hashIterations);
         System.out.println(hash);

@@ -97,7 +97,8 @@
             <value>
                 /admin.jsp=authc,roles[admin]
                 /user.jsp=authc,roles[user]
-                /user.jsp=authc,roles[user,guest]
+                /add.jsp=authc,roles[user,guest]
+                /guest.jsp=authc,roles[guest]
                 /shiro/login=anon
                 /shiro/logout=logout
                 /**=authc

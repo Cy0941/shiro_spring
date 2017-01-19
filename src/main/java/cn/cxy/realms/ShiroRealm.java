@@ -1,5 +1,6 @@
 package cn.cxy.realms;
 
+import cn.cxy.beans.User;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -8,8 +9,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Function: 自定义Realm，继承 AuthorizingRealm
@@ -30,14 +30,14 @@ public class ShiroRealm extends AuthorizingRealm {
         System.err.println("第一个-----授权-----ShiroRealm------");
         //1、从 PrincipalCollection 中获取登录用户信息
         //TODO 此处 principalCollection.getPrimaryPrincipal() 返回值由 doGetAuthenticationInfo 方法构建的参数决定
-        Object primaryPrincipal = principals.getPrimaryPrincipal();
-
+        User primaryPrincipal = (User)principals.getPrimaryPrincipal();
+        List<String> roleList = primaryPrincipal.getRoleList();
         //2、利用登录用户的信息获取对应的角色或权限
         Set<String> role = new HashSet<String>();
-        if ("admin".equals(primaryPrincipal)||"user".equals(primaryPrincipal)){
+        if (roleList.contains("admin")||roleList.contains("user")){
             role.add("user");
         }
-        if ("admin".equals(primaryPrincipal)){
+        if (roleList.contains("admin")){
             role.add("admin");
         }
 
@@ -76,15 +76,20 @@ public class ShiroRealm extends AuthorizingRealm {
             throw new IncorrectCredentialsException("---------wrong password--------");
         }
         //3、根据记录存在与否返回 null[异常交由对应 Controller 抛出] 或 SimpleAuthenticationInfo
-        Object principal = username;
         Object credentials = "123456";
+        List<String> roleList = new ArrayList<String>();
         if ("admin".equals(username)) {
             credentials = "038bdaf98f2037b31f1e75b5b4c9b26e";
+            roleList.add("admin");
+            roleList.add("user");
         }else if ("user".equals(username)){
             credentials = "098d2c478e9c11555ce2823231e02ec1";
+            roleList.add("user");
         }else if ("guest".equals(username)){
             credentials = "6af5141317258b4c866bd2bfe6b16e4e";
+            roleList.add("guest");
         }
+        Object principal = new User(username,credentials.toString(),roleList);
         String realmName = getName();
         //TODO 返回的 info 中需要来源于数据库的正确信息【用户名/用户实体 与 密码】 具体密码比对由 shiro 完成
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(principal,credentials,realmName);

@@ -6,19 +6,26 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <html>
 <head>
     <title>list</title>
 </head>
 <body>
     <div style="text-align: center">
+        Welcome&nbsp;<shiro:principal property="username"/>&nbsp;Login&nbsp;In
+        <br>
         <h3>List JSP</h3>
+        <shiro:hasAnyRoles name="admin,user">
+            <br>
+            <a href="/admin.jsp">Admin JSP</a>
+            <br>
+            <a href="/user.jsp">User JSP</a>
+            <br>
+            <a href="/add.jsp">Add JSP</a>
+        </shiro:hasAnyRoles>
         <br>
-        <a href="/admin.jsp">Admin JSP</a>
-        <br>
-        <a href="/user.jsp">User JSP</a>
-        <br>
-        <a href="/add.jsp">Add JSP</a>
+        <a href="/shiro/testAnnotation">Test Annotation</a>
         <br>
         <a href="/guest.jsp">Guest JSP</a>
         <br>

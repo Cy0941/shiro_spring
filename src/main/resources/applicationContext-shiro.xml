@@ -93,7 +93,7 @@
         <!--
             格式：URL = 拦截器[参数]
         -->
-        <property name="filterChainDefinitions">
+        <!--<property name="filterChainDefinitions">
             <value>
                 /admin.jsp=authc,roles[admin]
                 /user.jsp=authc,roles[user]
@@ -103,7 +103,12 @@
                 /shiro/logout=logout
                 /**=authc
             </value>
-        </property>
+        </property>-->
+        <!--TODO 优化filterChainDefinitions配置：通过工厂方法动态获取数据库中配置的权限信息-->
+        <property name="filterChainDefinitionMap" ref="filterChainDefinitionMap"/>
     </bean>
+
+    <!--配置工厂类与工厂方法-->
+    <bean id="filterChainDefinitionMap" factory-bean="filterChainDefinitionMapBuilder" factory-method="filterChainDefinitionMapBuilder"/>
 
 </beans>

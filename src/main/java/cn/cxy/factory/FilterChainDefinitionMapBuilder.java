@@ -13,6 +13,7 @@ public class FilterChainDefinitionMapBuilder {
     public LinkedHashMap<String,String> filterChainDefinitionMapBuilder(){
         LinkedHashMap<String,String> linkedHashMap = new LinkedHashMap<String, String>();
         //TODO 此处可动态从数据库获取权限信息
+        linkedHashMap.put("/list.jsp","user");//TODO 配置 user 过滤器可以实现登录或记住我实现访问
         linkedHashMap.put("/admin.jsp","authc,roles[admin]");
         linkedHashMap.put("/user.jsp","authc,roles[user]");
         linkedHashMap.put("/add.jsp","authc,roles[user,guest]");

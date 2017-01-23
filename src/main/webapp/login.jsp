@@ -18,6 +18,7 @@
             <br><br>
             password:<input type="password" name="password">
             <br><br>
+            <input type="checkbox" name="rememberMe" value="1">RememberMe
             <input type="submit" value="Submit">
         </form>
     </div>

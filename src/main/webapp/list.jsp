@@ -16,9 +16,11 @@
         Welcome&nbsp;<shiro:principal property="username"/>&nbsp;Login&nbsp;In
         <br>
         <h3>List JSP</h3>
-        <shiro:hasAnyRoles name="admin,user">
+        <shiro:hasRole name="admin">
             <br>
             <a href="/admin.jsp">Admin JSP</a>
+        </shiro:hasRole>
+        <shiro:hasAnyRoles name="admin,user">
             <br>
             <a href="/user.jsp">User JSP</a>
             <br>

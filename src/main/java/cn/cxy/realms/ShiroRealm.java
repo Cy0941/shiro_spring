@@ -2,6 +2,7 @@ package cn.cxy.realms;
 
 import cn.cxy.beans.User;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.crypto.hash.SimpleHash;
@@ -29,7 +30,7 @@ public class ShiroRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         System.err.println("第一个-----授权-----ShiroRealm------");
         //1、从 PrincipalCollection 中获取登录用户信息
-        //TODO 此处 principalCollection.getPrimaryPrincipal() 返回值由 doGetAuthenticationInfo 方法构建的参数决定
+        //TODO 此处 principalCollection.getPrimaryPrincipal() 返回值由 doGetAuthenticationInfo 方法构建的principal参数决定
         User primaryPrincipal = (User)principals.getPrimaryPrincipal();
         List<String> roleList = primaryPrincipal.getRoleList();
         //2、利用登录用户的信息获取对应的角色或权限
@@ -40,10 +41,11 @@ public class ShiroRealm extends AuthorizingRealm {
         if (roleList.contains("admin")){
             role.add("admin");
         }
-
         //3、构建 SimpleAuthorizationInfo 并设置 roles、permission
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo(role);
-
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        info.setRoles(role);
+//        Set<String> perms = new HashSet<String>();
+//        info.setStringPermissions(perms);
         //4、返回对应info
         return info;
     }
@@ -58,24 +60,18 @@ public class ShiroRealm extends AuthorizingRealm {
         //1、AuthenticationToken 强转为 UsernamePasswordToken
         System.err.println("第一个-----认证-----ShiroRealm---------");
         UsernamePasswordToken token = (UsernamePasswordToken)authenticationToken;
-
         //2、从 UsernamePasswordToken 中获取用户录入的 username   TODO 密码
         String username = token.getUsername();
         //3、从数据库中查询对应记录
         System.out.println("data from db:"+username+" : "+"123456");
-
-        //TODO
-        if ("unknown".equals(username)){
-            throw new UnknownAccountException("-------unknown account-------");
-        }
-        if ("monster".equals(username)){
-            throw new UnknownAccountException("------account has been locked-------");
-        }
-        String inputPassword = new String(token.getPassword());
-        if (!"123456".equals(inputPassword)){
-            throw new IncorrectCredentialsException("---------wrong password--------");
-        }
         //3、根据记录存在与否返回 null[异常交由对应 Controller 抛出] 或 SimpleAuthenticationInfo
+        //设置加密算法及加密次数、加密后字符串编码方式等
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
+        matcher.setHashAlgorithmName("SHA-384");
+        matcher.setHashIterations(1000);
+        matcher.setStoredCredentialsHexEncoded(false);
+        this.setCredentialsMatcher(matcher);
+        //TODO 模拟密码加密
         Object credentials = "123456";
         List<String> roleList = new ArrayList<String>();
         if ("admin".equals(username)) {

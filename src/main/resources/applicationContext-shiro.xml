@@ -5,18 +5,30 @@
 
     <!-- SecurityManager 配置-->
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-        <!--缓存管理-->
+        <!--缓存管理 TODO 缓存名字配置作用？？？-->
         <property name="cacheManager" ref="cacheManager"/>
         <!--TODO 认证策略配置，必须在 realms 属性之前-->
         <property name="authenticator" ref="authenticator"/>
         <!--单 realm 配置-->
         <!--<property name="realm" ref="firstRealm"/>-->
-
+        <!--多realms配置；也可以配置在 authenticator 中，但效率低（会有一步判断设置给 realm）-->
         <property name="realms">
             <list>
-                <ref bean="firstRealm"/>
+                <ref bean="shiroRealm"/>
                 <ref bean="secondRealm"/>
             </list>
+        </property>
+        <!--记住我缓存管理器-->
+        <property name="rememberMeManager" ref="rememberMeManager"/>
+    </bean>
+
+    <!--记住我缓存时间设置-->
+    <bean class="org.apache.shiro.web.mgt.CookieRememberMeManager" id="rememberMeManager">
+        <property name="cookie">
+            <bean class="org.apache.shiro.web.servlet.SimpleCookie">
+                <!--缓存时间设置，单位：秒-->
+                <property name="maxAge" value="10"/>
+            </bean>
         </property>
     </bean>
 
@@ -40,12 +52,14 @@
     <bean class="cn.cxy.realms.SecondRealm" id="secondRealm">
         <property name="credentialsMatcher">
             <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <!--加密算法配置-->
                 <property name="hashAlgorithmName" value="SHA1"/>
+                <!--加密次数-->
                 <property name="hashIterations" value="1024"/>
             </bean>
         </property>
     </bean>
-    <bean class="cn.cxy.realms.ShiroRealm" id="firstRealm">
+    <bean class="cn.cxy.realms.ShiroRealm" id="shiroRealm">
         <!--自定义加密-->
         <property name="credentialsMatcher">
             <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
@@ -61,7 +75,7 @@
     <!--shiro 生命周期管理-->
     <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
 
-    <!--Shiro 注解配置，仅在 lifecycleBeanProcessor 配置后生效-->
+    <!--shiro 注解配置，仅在 lifecycleBeanProcessor 配置后生效-->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
           depends-on="lifecycleBeanPostProcessor"/>
 
@@ -74,7 +88,7 @@
     <!--核心过滤器链：id 属性必须与 web.xml 中 DelegatingFilterProxy 的 <filter-name> 名称相同 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"/>
-        <!--TODO 登录：在未登录情况下，所有的请求都将被拦截到此 URL-->
+        <!--TODO 登录：在未登录情况下，所有的请求都将被拦截到此 URL，GET 请求-->
         <property name="loginUrl" value="/login.jsp"/>
         <!--可以不配置-->
         <property name="successUrl" value="/list.jsp"/>
@@ -92,6 +106,12 @@
 
         <!--
             格式：URL = 拦截器[参数]
+            URL 权限采取第一次匹配优先的原则
+            URL 匹配模式采用 Ant 风格：
+                TODO 支持 ?、*、** ，不包括目录分隔符
+                - ? 匹配一个字符
+                - * 匹配零个或多个字符串
+                - ** 匹配路径中的另个或多个路径
         -->
         <!--<property name="filterChainDefinitions">
             <value>
